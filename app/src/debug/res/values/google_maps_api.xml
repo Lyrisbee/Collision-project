@@ -1,0 +1,19 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=02:34:FE:48:F5:CE:2B:E4:5D:70:16:CF:0D:D9:3B:55:32:90:01:EA%3Bcom.example.lyrisbee.google_service
+
+    You can also add your credentials to an existing key, using this line:
+    02:34:FE:48:F5:CE:2B:E4:5D:70:16:CF:0D:D9:3B:55:32:90:01:EA;com.example.lyrisbee.google_service
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDqi71fPl8Zo9Eo2eU7iphDdOgIQ6As3no</string>
+</resources>
