@@ -100,6 +100,7 @@ public class SendLoc extends AsyncTask<MyTaskParams,Void,JSONObject> {
         //當斷線時會跳到catch,可以在這裡寫上斷開連線後的處理
              e.printStackTrace();
              Log.e("text", "Socket連線=" + e.toString());
+            return null;
         //當斷線時自動關閉房間
         }
         return null;

@@ -22,7 +22,9 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +65,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
     TelephonyManager tm;
     String deviceId;
     Vibrator myVibrator;
+    int socketconnectrefuse = 0;
     int warning = 0;
     Bitmap icon;
     int RoundCount = 0;
@@ -252,7 +255,9 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
                     .fillColor(Color.rgb(255, 102, 122)));*/
             //CircleCount = 0;
         //}
-
+        if(socketconnectrefuse<5) {
+            SocketConnect();
+        }
        // Log.e("text","Speed OK");
         Speed = CalCulateSpeed();
 
@@ -265,10 +270,21 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
 
        // Log.e("text","Connect Start");
         //deviceId = "2";
-        MyTaskParams params = new MyTaskParams(latlng,deviceId,(int)Speed,Angle);
+
+        RoundCount++;
+    }
+    public void SocketConnect(){
+        LinearLayout connect_mes = (LinearLayout) findViewById(R.id.Connect_message);
+
+        MyTaskParams params = new MyTaskParams(latlng, deviceId, (int) Speed, Angle);
         try {
+
             JSONObject output = new SendLoc().execute(params).get();
             if(output !=null) {
+
+                if(connect_mes.getVisibility() == View.VISIBLE){
+                    connect_mes.setVisibility(View.GONE);
+                }
                 Log.e("text", "output");
                 Log.d("test", output.getString("yorn"));
                 Log.d("test", output.getString("latitude"));
@@ -278,6 +294,15 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
                     Toast.makeText(this, "警告 !! ", Toast.LENGTH_LONG).show();
                 }
                 output = null;
+            }
+            else{
+                socketconnectrefuse ++;
+                if(socketconnectrefuse >= 5){
+
+                    TextView mes = (TextView) findViewById(R.id.connect_mes);
+                    mes.setText(R.string.connect_message);
+                    connect_mes.setVisibility(View.VISIBLE);
+                }
             }
             /*if(output == -1){
                 ConnectFail ++;
@@ -293,9 +318,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
             e.printStackTrace();
         }
 
-        RoundCount++;
     }
-
     //Delete old value (5sec ago)
     public void SwapLatLng(){
 
@@ -343,6 +366,13 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
         angle = CalculateAngle(latlngbuffer[down],latlngbuffer[top]);
 
         return angle;
+    }
+    public void connectAction(View view){
+
+        socketconnectrefuse = 0;
+        TextView mes = (TextView) findViewById(R.id.connect_mes);
+        mes.setText(R.string.reconnect);
+
     }
 
 }
