@@ -24,6 +24,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -221,6 +222,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
 
     @Override
     public void onLocationChanged(Location location) {
+
         int top;
         if (mCurrLocation != null) {
             mCurrLocation.remove();
@@ -281,7 +283,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
 
             JSONObject output = new SendLoc().execute(params).get();
             if(output !=null) {
-
+                LinearLayout warning_mes = (LinearLayout) findViewById(R.id.warning_message);
                 if(connect_mes.getVisibility() == View.VISIBLE){
                     connect_mes.setVisibility(View.GONE);
                 }
@@ -291,7 +293,10 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
                 Log.d("test", output.getString("longitude"));
                 if(output.getString("yorn")=="true"){
                     myVibrator.vibrate(3000);
+                    warning_mes.setVisibility(View.VISIBLE);
                     Toast.makeText(this, "警告 !! ", Toast.LENGTH_LONG).show();
+                }else{
+                    warning_mes.setVisibility(View.GONE);
                 }
                 output = null;
             }
