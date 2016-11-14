@@ -114,7 +114,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
         buildGoogleApiClient();
         mGoogleApiClient.connect();
         icon = BitmapFactory.decodeResource(context.getResources(),
-                R.drawable.warning);
+                R.drawable.exclamation);
 
     }
     public void PhoneSetting(){
@@ -133,7 +133,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
         deviceId = tm.getDeviceId();
     }
     protected synchronized void buildGoogleApiClient() {
-        Toast.makeText(this,"buildGoogleApiClient",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"buildGoogleApiClient",Toast.LENGTH_SHORT).show();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -173,7 +173,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
         // LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, (com.google.android.gms.location.LocationListener) this);
 
         getScreenInches();
-        Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
+       //Toast.makeText(this, "onConnected", Toast.LENGTH_SHORT).show();
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
 
@@ -205,18 +205,18 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         int hi = dm.heightPixels ;
-        Toast.makeText(this, "Height : " + hi, Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "Height : " + hi, Toast.LENGTH_SHORT).show();
 
     }
     @Override
     public void onConnectionSuspended(int i) {
-        Toast.makeText(this, "onConnectionSuspended", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "onConnectionSuspended", Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(this, "onConnectionFailed", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "onConnectionFailed", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -229,14 +229,9 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
         }
 
         latlng = new LatLng(location.getLatitude(), location.getLongitude());
-        if(warning == 1) {
-            mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(R.drawable.warning, 75, 75)))
 
-                    .position(new LatLng(latlng.latitude - 0.00001, latlng.longitude - 0.00001)));
-        }
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 19));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
        // Log.e("text","Camera OK");
 
         // Save max - 5  latlng value
@@ -277,7 +272,8 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
     }
     public void SocketConnect(){
         LinearLayout connect_mes = (LinearLayout) findViewById(R.id.Connect_message);
-
+        LatLng intrasection ;
+        Marker exclamation = null;
         MyTaskParams params = new MyTaskParams(latlng, deviceId, (int) Speed, Angle);
         try {
 
@@ -291,11 +287,18 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
                 Log.d("test", output.getString("yorn"));
                 Log.d("test", output.getString("latitude"));
                 Log.d("test", output.getString("longitude"));
+
                 if(output.getString("yorn")=="true"){
+                    intrasection = new LatLng(Double.valueOf(output.getString("latitude")),Double.valueOf(output.getString("longitude")));
+                    mMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromBitmap(resizeMapIcons(R.drawable.exclamation, 100, 100)))
+
+                            .position(new LatLng(intrasection.latitude-0.00008, intrasection.longitude)));
                     myVibrator.vibrate(3000);
                     warning_mes.setVisibility(View.VISIBLE);
                     Toast.makeText(this, "警告 !! ", Toast.LENGTH_LONG).show();
                 }else{
+                    mMap.clear();
                     warning_mes.setVisibility(View.GONE);
                 }
                 output = null;

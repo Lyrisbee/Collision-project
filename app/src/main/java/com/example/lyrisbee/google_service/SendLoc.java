@@ -55,7 +55,7 @@ public class SendLoc extends AsyncTask<MyTaskParams,Void,JSONObject> {
 
         try{
         Log.e("text","try");
-        clientSocket = new Socket("140.123.101.235",10002);
+        clientSocket = new Socket("140.123.101.222",10002);
         JSONObject message = new JSONObject();
             message.put("mac",mac);
             message.put("latitude",latLng.latitude);
