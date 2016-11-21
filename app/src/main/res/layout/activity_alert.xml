@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_simple_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.lyrisbee.google_service.SimpleView">
+
+
+    <EditText
+        android:id="@+id/ip"
+        android:layout_width="195dp"
+        android:layout_height="wrap_content"
+        android:hint="ip"/>
+
+    <EditText
+        android:id="@+id/port"
+        android:layout_height="wrap_content"
+        android:layout_width="125dp"
+        android:hint="port"
+        />
+
+</LinearLayout>

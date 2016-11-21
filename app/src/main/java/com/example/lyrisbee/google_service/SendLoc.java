@@ -25,11 +25,16 @@ class MyTaskParams {
     String Mac;
     int Speed;
     double Angle;
-    MyTaskParams(LatLng location,String Mac,int Speed, double Angle) {
+    int port;
+    String ip;
+
+    MyTaskParams(String ip,int port,LatLng location,String Mac,int Speed, double Angle) {
         this.location = location;
         this.Mac = Mac;
         this.Speed = Speed;
         this.Angle = Angle;
+        this.ip = ip;
+        this.port = port;
     }
 }
 public class SendLoc extends AsyncTask<MyTaskParams,Void,JSONObject> {
@@ -38,15 +43,16 @@ public class SendLoc extends AsyncTask<MyTaskParams,Void,JSONObject> {
     private Socket clientSocket;
     private PrintWriter mOutput;
     LatLng latLng;
-    String mac;
-    int Speed;
+    String mac, ip;
+    int Speed, port;
     double Angle;
 
 
     @Override
     protected JSONObject doInBackground(MyTaskParams... params) {
         // IP為Server端
-
+        ip = params[0].ip;
+        port = params[0].port;
         latLng = params[0].location;
         mac = params[0].Mac;
         Speed = params[0].Speed;
@@ -54,24 +60,15 @@ public class SendLoc extends AsyncTask<MyTaskParams,Void,JSONObject> {
 
 
         try{
-        Log.e("text","try");
-        clientSocket = new Socket("140.123.101.222",10002);
+        Log.e("text",ip +", " + port);
+        clientSocket = new Socket(ip,port);
         JSONObject message = new JSONObject();
             message.put("mac",mac);
             message.put("latitude",latLng.latitude);
             message.put("longitude",latLng.longitude);
             message.put("speed",Speed);
             message.put("orientation",Angle);
-            /*if(clientSocket.isConnected()) {
-                Log.e("text","connect");
-                mOutput = new PrintWriter(new BufferedWriter(
-                        new OutputStreamWriter(clientSocket.getOutputStream())), true);
-                mOutput.write(message.toString());
-                Log.e("text",message.toString());
-            }*/
 
-                    //取得網路輸出串流
-        // 取得網路輸入串流
 
         if(clientSocket.isConnected()) {
             // 當連線後

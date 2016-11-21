@@ -1,16 +1,18 @@
 package com.example.lyrisbee.google_service;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.app.Service;
 
-import android.graphics.Color;
+
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.SystemClock;
+
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -22,9 +24,12 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.GridLayout;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +52,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 
@@ -65,13 +71,15 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
     TextView location_txt;
     TelephonyManager tm;
     String deviceId;
+    String ip = "140.123.101.222";
+    int port = 10002, min=0, seconds=0;
     Vibrator myVibrator;
     int socketconnectrefuse = 0;
     int warning = 0;
     Bitmap icon;
     int RoundCount = 0;
     int ConnectFail = 0;
-
+    ImageButton setting;
 
 
     @Override
@@ -107,25 +115,60 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+
+
         getDeviceId();
 
         mMap.setMyLocationEnabled(true);
+
 
         buildGoogleApiClient();
         mGoogleApiClient.connect();
         icon = BitmapFactory.decodeResource(context.getResources(),
                 R.drawable.exclamation);
+        setting = (ImageButton) findViewById(R.id.settingbutton);
+        setting.setOnClickListener(new ImageButton.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+
+                v = LayoutInflater.from(MapsActivity.this).inflate(R.layout.activity_alert,null);
+                final EditText iptext = (EditText) v.findViewById(R.id.ip);
+                final EditText porttext = (EditText) v.findViewById(R.id.port);
+                iptext.setText(ip);
+                porttext.setText(String.valueOf(port));
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                builder.setTitle("Ip Setting")
+                        .setMessage("Ip/Port")
+                        .setView(v)
+                        .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                ip = iptext.getText().toString();
+                                port = Integer.valueOf(porttext.getText().toString());
+                            }
+                         })
+                        .setNegativeButton("Cancel",null)
+                        .setCancelable(false);
+
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+
+        });
 
     }
+
     public void PhoneSetting(){
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         myVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE);
 
     }
-    public void UiSetting(){
+    public void uiSetting(){
 
-        mMap.getUiSettings().setAllGesturesEnabled(false);
-        mMap.getUiSettings().setMapToolbarEnabled(false);
+        //mMap.getUiSettings().setAllGesturesEnabled(false);
+        //mMap.getUiSettings().setMapToolbarEnabled(false);
 
     }
     public void getDeviceId(){
@@ -274,7 +317,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
         LinearLayout connect_mes = (LinearLayout) findViewById(R.id.Connect_message);
         LatLng intrasection ;
         Marker exclamation = null;
-        MyTaskParams params = new MyTaskParams(latlng, deviceId, (int) Speed, Angle);
+        MyTaskParams params = new MyTaskParams(ip, port, latlng, deviceId, (int) Speed, Angle);
         try {
 
             JSONObject output = new SendLoc().execute(params).get();
@@ -295,10 +338,20 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
 
                             .position(new LatLng(intrasection.latitude-0.00008, intrasection.longitude)));
                     myVibrator.vibrate(3000);
+                    Calendar c = Calendar.getInstance();
+                    seconds = c.get(Calendar.SECOND);
+                    min = c.get(Calendar.MINUTE);
                     warning_mes.setVisibility(View.VISIBLE);
                     Toast.makeText(this, "警告 !! ", Toast.LENGTH_LONG).show();
                 }else{
-                    mMap.clear();
+
+                    Calendar c = Calendar.getInstance();
+                    if(60*c.get(Calendar.MINUTE)+c.get(Calendar.SECOND)-60*min+seconds >2){
+                        mMap.clear();
+                    }
+                    seconds = 5000;
+                    min = 0;
+
                     warning_mes.setVisibility(View.GONE);
                 }
                 output = null;
@@ -380,8 +433,8 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
         socketconnectrefuse = 0;
         TextView mes = (TextView) findViewById(R.id.connect_mes);
         mes.setText(R.string.reconnect);
-
     }
+
 
 }
 

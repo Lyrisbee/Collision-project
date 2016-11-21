@@ -10,8 +10,9 @@ import android.os.Bundle;
  * Created by Lyrisbee on 2016/11/9.
  */
 
-public class ConnectMessageDialog extends DialogFragment {
-    boolean answer;
+public class MessageDialog extends DialogFragment {
+    String ip;
+    String port;
     @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the Builder class for convenient dialog construction
@@ -20,21 +21,22 @@ public class ConnectMessageDialog extends DialogFragment {
             builder.setMessage(R.string.connect_message)
                     .setPositiveButton(R.string.reconnect, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            answer = true;
+
                         }
                     })
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            ConnectMessageDialog.this.getDialog().cancel();
-                            answer = false;
+
+                            ip = "false";
+                            MessageDialog.this.getDialog().cancel();
                         }
                     });
 
             // Create the AlertDialog object and return it
             return builder.create();
         }
-    public boolean getAnswer(){
-        return answer;
+    public String getAnswer(){
+        return ip;
     }
 }
 
